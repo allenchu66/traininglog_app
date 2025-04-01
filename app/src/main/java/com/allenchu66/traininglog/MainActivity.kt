@@ -11,37 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.allenchu66.traininglog.databinding.MainActivityBinding
 import com.allenchu66.traininglog.ui.theme.TraininglogTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var binding: MainActivityBinding;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            TraininglogTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
+        binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TraininglogTheme {
-        Greeting("Android")
-    }
-}
