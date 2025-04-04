@@ -1,6 +1,7 @@
 package com.allenchu66.traininglog.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -19,6 +21,7 @@ import com.allenchu66.traininglog.activity.MainActivity
 import com.allenchu66.traininglog.adapter.WorkoutAdapter
 import com.allenchu66.traininglog.databinding.FragmentHomeBinding
 import com.allenchu66.traininglog.model.Workout
+import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -42,12 +45,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         workoutViewModel = (activity as MainActivity).workoutViewModel
         binding.addNoteFab.setOnClickListener{
-            it.findNavController().navigate(R.id.action_homeFragment_to_editFragment)
+            addWorkout(view)
         }
+
         initRecyclerView()
     }
 
-    private fun updateUI(workouts : List<Workout>?){
+    private fun addWorkout(view:View){
+        val workout = Workout(0,1,"槓鈴臥推",5,12,50f,System.currentTimeMillis())
+        workoutViewModel.addWorkout(workout)
+        Toast.makeText(view.context,"Note Saved",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateRecyclerView(workouts : List<Workout>?){
         if(workouts != null){
             if(workouts.isNotEmpty()){
                 binding.emptyNotesImage.visibility = View.GONE
@@ -59,8 +69,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun updateCatefory(workoutCategorys: List<WorkoutCategory>?){
+        if(workoutCategorys != null){
+           workoutAdapter.updateCategories(workoutCategorys)
+        }
+    }
+
     private fun initRecyclerView(){
-        workoutAdapter = WorkoutAdapter()
+        workoutAdapter = WorkoutAdapter(workoutViewModel)
         binding.homeRecyclerView.apply {
             layoutManager = StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
@@ -70,7 +86,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         activity?.let {
             workoutViewModel.getAllWorkout().observe(viewLifecycleOwner){
                 workout -> workoutAdapter.differ.submitList(workout)
-                updateUI(workout)
+                updateRecyclerView(workout)
+            }
+        }
+
+        activity?.let {
+            workoutViewModel.getAllWorkoutCategory().observe(viewLifecycleOwner) {
+                categories -> updateCatefory(categories)
             }
         }
     }

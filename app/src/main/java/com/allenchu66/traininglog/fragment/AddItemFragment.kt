@@ -35,14 +35,9 @@ class AddItemFragment : Fragment(R.layout.fragment_add) {
         workoutViewModel = (activity as MainActivity).workoutViewModel
         addItemView = view
         binding.addWorkout.setOnClickListener(){
-            saveWorkout(addItemView)
+            //saveWorkout(addItemView)
         }
     }
 
-    private fun saveWorkout(view:View){
-        val workout = Workout(0,"胸推","槓鈴臥推",5,12,50f,System.currentTimeMillis())
-        workoutViewModel.addWorkout(workout)
-        Toast.makeText(addItemView.context,"Note Saved",Toast.LENGTH_SHORT).show()
-        view.findNavController().popBackStack(R.id.homeFragment,false)
-    }
+
 }
