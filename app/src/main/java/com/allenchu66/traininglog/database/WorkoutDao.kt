@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.*
 import com.allenchu66.traininglog.model.Workout
+import com.allenchu66.traininglog.model.WorkoutCategory
 
 @Dao
 interface WorkoutDao {
@@ -16,6 +17,12 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout ORDER BY date DESC")
     fun getAllWorkouts(): LiveData<List<Workout>>
 
-    @Query("SELECT * FROM workout WHERE category = :category ORDER BY date DESC")
-    fun getWorkoutsByCategory(category: String): LiveData<List<Workout>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutCategory(workoutCategory: WorkoutCategory)
+
+    @Delete
+    suspend fun deleteWorkoutCategory(workoutCategory: WorkoutCategory)
+
+    @Query("SELECT * FROM category")
+    fun getAllWorkoutCategorys(): LiveData<List<WorkoutCategory>>
 }

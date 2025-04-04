@@ -2,14 +2,24 @@ package com.allenchu66.traininglog.model
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = "workout")
+
+@Entity(
+    tableName = "workout",
+    foreignKeys = [ForeignKey(
+        entity = WorkoutCategory::class,
+        parentColumns = ["id"],
+        childColumns = ["categoryId"],
+        onDelete = ForeignKey.SET_NULL
+    )]
+)
 @Parcelize
 data class Workout(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,  // 自動生成 ID
-    val category: String, // 訓練類別（胸、背、腿）
+    val categoryId: Int?, // 訓練類別（胸、背、腿） 使用 categoryId，而不是直接存名稱
     val exercise: String, // 訓練動作（槓鈴胸推、啞鈴胸推）
     val sets: Int,        // 組數
     val reps: Int,        // 每組次數
