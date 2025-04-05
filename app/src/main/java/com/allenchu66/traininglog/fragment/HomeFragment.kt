@@ -14,6 +14,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.allenchu66.traininglog.R
@@ -45,17 +48,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         workoutViewModel = (activity as MainActivity).workoutViewModel
         binding.addNoteFab.setOnClickListener{
-            addWorkout(view)
+            addWorkout()
         }
 
         initRecyclerView()
     }
 
-    private fun addWorkout(view:View){
-        val workout = Workout(0,1,"槓鈴臥推",5,12,50f,System.currentTimeMillis())
-        workoutViewModel.addWorkout(workout)
-        Toast.makeText(view.context,"Note Saved",Toast.LENGTH_SHORT).show()
+    private fun addWorkout(){
+        workoutViewModel.addWorkoutWithDefaults()
     }
+
 
     private fun updateRecyclerView(workouts : List<Workout>?){
         if(workouts != null){
@@ -69,14 +71,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun updateCatefory(workoutCategorys: List<WorkoutCategory>?){
+    private fun updateCategory(workoutCategorys: List<WorkoutCategory>?){
         if(workoutCategorys != null){
            workoutAdapter.updateCategories(workoutCategorys)
         }
     }
 
     private fun initRecyclerView(){
-        workoutAdapter = WorkoutAdapter(workoutViewModel)
+        workoutAdapter = WorkoutAdapter(workoutViewModel,viewLifecycleOwner)
         binding.homeRecyclerView.apply {
             layoutManager = StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
@@ -92,7 +94,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         activity?.let {
             workoutViewModel.getAllWorkoutCategory().observe(viewLifecycleOwner) {
-                categories -> updateCatefory(categories)
+                categories -> updateCategory(categories)
             }
         }
     }
