@@ -33,6 +33,9 @@ interface WorkoutDao {
     @Update
     suspend fun updateWorkout(workout: Workout)
 
+    @Query("SELECT * FROM workout WHERE date BETWEEN :start AND :end ORDER BY date DESC")
+    fun getWorkoutsByDate(start: Long, end: Long): LiveData<List<Workout>>
+
     @Query("SELECT * FROM workout ORDER BY date DESC")
     fun getAllWorkouts(): LiveData<List<Workout>>
 

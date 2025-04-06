@@ -4,28 +4,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.allenchu66.traininglog.R
 import com.allenchu66.traininglog.activity.MainActivity
-import com.allenchu66.traininglog.adapter.WorkoutAdapter
+import com.allenchu66.traininglog.adapter.WorkoutSection
 import com.allenchu66.traininglog.databinding.FragmentHomeBinding
 import com.allenchu66.traininglog.model.Workout
 import com.allenchu66.traininglog.model.WorkoutCategory
+import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -33,7 +23,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val binding get() = homeBinding!!
 
     private lateinit var workoutViewModel : WorkoutViewModel
-    private lateinit var  workoutAdapter: WorkoutAdapter
+    private lateinit var categories: List<WorkoutCategory>
+    private lateinit var sectionAdapter: SectionedRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,14 +45,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         initRecyclerView()
     }
 
-    private fun addWorkout(){
-        workoutViewModel.addWorkoutWithDefaults()
-    }
-
-
-    private fun updateRecyclerView(workouts : List<Workout>?){
-        if(workouts != null){
-            if(workouts.isNotEmpty()){
+    private fun updateRecyclerView(groupList: List<WorkoutGroup> ){
+        if(groupList != null){
+            if(groupList.isNotEmpty()){
                 binding.emptyNotesImage.visibility = View.GONE
                 binding.homeRecyclerView.visibility = View.VISIBLE
             }else{
@@ -71,30 +57,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun updateCategory(workoutCategorys: List<WorkoutCategory>?){
-        if(workoutCategorys != null){
-           workoutAdapter.updateCategories(workoutCategorys)
-        }
+
+    private fun addWorkout(){
+        workoutViewModel.addWorkoutWithDefaults()
     }
 
     private fun initRecyclerView(){
-        workoutAdapter = WorkoutAdapter(workoutViewModel,viewLifecycleOwner)
+        sectionAdapter = SectionedRecyclerViewAdapter()
         binding.homeRecyclerView.apply {
             layoutManager = StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
-            adapter = workoutAdapter
+            adapter = sectionAdapter
         }
 
         activity?.let {
-            workoutViewModel.getAllWorkout().observe(viewLifecycleOwner){
-                workout -> workoutAdapter.differ.submitList(workout)
-                updateRecyclerView(workout)
-            }
-        }
-
-        activity?.let {
-            workoutViewModel.getAllWorkoutCategory().observe(viewLifecycleOwner) {
-                categories -> updateCategory(categories)
+            workoutViewModel.getGroupedWorkoutWithCategories().observe(viewLifecycleOwner) { (groupList, categories) ->
+                Log.d("HomeFragment", "Grouped size: ${groupList.size}")
+                sectionAdapter.removeAllSections()
+                groupList.forEach { group ->
+                    Log.d("HomeFragment", "Group: ${group.category.name} / ${group.exercise.name} / items=${group.workouts.size}")
+                    sectionAdapter.addSection(
+                        WorkoutSection(group, categories, workoutViewModel, viewLifecycleOwner)
+                    )
+                }
+                updateRecyclerView(groupList)
+                sectionAdapter.notifyDataSetChanged()
             }
         }
     }

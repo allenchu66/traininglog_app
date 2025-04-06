@@ -32,8 +32,8 @@ data class Workout(
     var categoryId: Int?, // 訓練類別（胸、背、腿） 使用 categoryId，而不是直接存名稱
     var exerciseId: Int? = null, // 訓練動作（槓鈴胸推、啞鈴胸推）
     val sets: Int,        // 組數
-    val reps: Int,        // 每組次數
-    val weight: Float,    // 重量（kg）
+    var reps: Int,        // 每組次數
+    var weight: Float,    // 重量（kg）
     val date: Long,       // 訓練日期（以 timestamp 存）
     val notes: String? = null  // 備註（可選）
 ):Parcelable

@@ -13,6 +13,7 @@ ksp = "2.1.20-1.0.32"
 mediationTestSuite = "3.0.0"
 fragment = "1.8.6"
 navigationFragment = "2.8.9"
+sectionedRecyclerView = "v3.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +36,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 mediation-test-suite = { group = "com.google.android.ads", name = "mediation-test-suite", version.ref = "mediationTestSuite" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+
+sectioned_recyclerView = {module = "com.github.luizgrp:SectionedRecyclerViewAdapter",version.ref = "sectionedRecyclerView"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

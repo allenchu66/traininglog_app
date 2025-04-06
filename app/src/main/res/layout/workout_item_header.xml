@@ -6,12 +6,12 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="10dp"
-    app:cardElevation="6dp">
+    app:cardElevation="6dp"
+    android:background="@drawable/pink_border">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/pink_border"
         android:orientation="horizontal"
         android:padding="16dp">
 
@@ -25,27 +25,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
-        <TextView
-            android:id="@+id/workoutTitle"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="200"
-            android:fontFamily="@font/poppins"
-            android:text="Note Title"
-            android:textColor="@color/red"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/noteDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/poppins"
-            android:maxHeight="170dp"
-            android:text="Description"
-            android:textColor="@color/pink"
-            android:textSize="14sp" />
-
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
