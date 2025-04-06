@@ -70,6 +70,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.sectioned.recyclerView)
+    implementation(libs.lifecycle.livedata.ktx)
 }
 
 

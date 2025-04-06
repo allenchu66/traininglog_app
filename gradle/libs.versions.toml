@@ -36,6 +36,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 mediation-test-suite = { group = "com.google.android.ads", name = "mediation-test-suite", version.ref = "mediationTestSuite" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version = "2.6.2" }
 
 sectioned_recyclerView = {module = "com.github.luizgrp:SectionedRecyclerViewAdapter",version.ref = "sectionedRecyclerView"}
 

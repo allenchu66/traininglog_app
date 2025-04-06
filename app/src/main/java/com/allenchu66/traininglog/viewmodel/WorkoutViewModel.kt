@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -35,23 +37,40 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
             workoutRepository.getWorkoutsByDate(todayStart, todayEnd).observeForever { workoutList ->
                 viewModelScope.launch {
                     val categories = workoutRepository.getAllCategoriesDirect()
-                    val workoutGroups = workoutList
-                        .filter { it.categoryId != null && it.exerciseId != null }
+
+                    // 只要有 categoryId 就參與分組（允許 exerciseId 為 null）
+                    val grouped = workoutList
+                        .filter { it.categoryId != null }
                         .groupBy { Pair(it.categoryId, it.exerciseId) }
                         .mapNotNull { (key, group) ->
-                            val category = categories.find { it.id == key.first }
-                            val exercise = workoutRepository.getExercisesByCategoryDirect(key.first!!).find { it.id == key.second }
+                            val categoryId = key.first!!
+                            val category = categories.find { it.id == categoryId }
+
+                            val exercise = if (key.second != null) {
+                                workoutRepository.getExercisesByCategoryDirect(categoryId)
+                                    .find { it.id == key.second }
+                            } else {
+                                // 動作尚未選擇，建立虛擬項目
+                                Exercise(
+                                    id = -1,
+                                    name = "請選擇動作",
+                                    categoryId = categoryId
+                                )
+                            }
+
                             if (category != null && exercise != null) {
                                 WorkoutGroup(category, exercise, group)
                             } else null
                         }
-                    resultLiveData.postValue(workoutGroups)
+
+                    resultLiveData.postValue(grouped)
                 }
             }
         }
 
         return resultLiveData
     }
+
 
     fun getGroupedWorkoutWithCategories(): LiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>> {
         val result = MediatorLiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>>()
@@ -129,7 +148,7 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
 
                 val workout = Workout(
                     categoryId = firstCategory.id,
-                    exerciseId = firstExerciseId,
+                    exerciseId = null,
                     sets = 5,
                     reps = 12,
                     weight = 50f,

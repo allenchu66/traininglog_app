@@ -67,16 +67,16 @@ class WorkoutHeaderViewHolder(val itemBinding: WorkoutItemHeaderBinding) :
                     val selectedCategory = categories[position]
                     // 這裡可以觸發更新資料庫的操作
                     if (group.category.id != selectedCategory.id) {
-                        Log.d(
-                            "WorkoutAdapter",
-                            "category ID: ${selectedCategory.id}, Name: ${selectedCategory.name}"
-                        )
+                        Log.d("WorkoutAdapter", "category ID: ${selectedCategory.id}, Name: ${selectedCategory.name}")
                         // 更新 group 所有 Workout 的 categoryId 與 exerciseId（清空）
                         group.workouts.forEach { workout ->
                             workout.categoryId = selectedCategory.id
                             workout.exerciseId = null
                             workoutViewModel.updateWorkout(workout)
                         }
+
+                        group.category = selectedCategory
+                        group.exercise = Exercise(-1,selectedCategory.id,"請選擇動作")
 
                         updateExerciseSpinner(
                             group,
@@ -108,21 +108,26 @@ class WorkoutHeaderViewHolder(val itemBinding: WorkoutItemHeaderBinding) :
         binding: WorkoutItemHeaderBinding,
         lifecycleOwner: LifecycleOwner
     ) {
-//            // 清空原有的 Exercise 資料
-        val emptyList = mutableListOf<Exercise>()
+
         spinnerExerciseAdapter.clear()
-        spinnerExerciseAdapter.addAll(emptyList)
         spinnerExerciseAdapter.notifyDataSetChanged()
 
         // 加載新的 Exercise 資料
         workoutViewModel.getExercisesByCategory(categoryId)
             .observe(lifecycleOwner) { exercises ->
                 exercises?.let {
+                    //  在最前加一筆虛擬項目
+                    val exerciseList = mutableListOf(
+                        Exercise(id = -1, name = "請選擇動作", categoryId = categoryId)
+                    ).apply { addAll(it) }
+
                     // 更新 spinner 資料
                     spinnerExerciseAdapter.clear()
-                    spinnerExerciseAdapter.addAll(it)
+                    spinnerExerciseAdapter.addAll(exerciseList)
                     spinnerExerciseAdapter.notifyDataSetChanged()
 
+                    // 避免第一次就觸發更新
+                    var isInitialLoad = true
                     // 確保設置 onItemSelectedListener 在更新後依然存在
                     itemBinding.workoutExercise.onItemSelectedListener =
                         object : AdapterView.OnItemSelectedListener {
@@ -132,18 +137,21 @@ class WorkoutHeaderViewHolder(val itemBinding: WorkoutItemHeaderBinding) :
                                 position: Int,
                                 id: Long
                             ) {
+                                if (isInitialLoad) {
+                                    isInitialLoad = false
+                                    return
+                                }
                                 Log.d("WorkoutAdapter", "Exercise spinner listener")
                                 val selectedExercise = spinnerExerciseAdapter.getItem(position)
                                 selectedExercise?.let {
-                                    if (group.exercise.id != it.id) {
-                                        Log.d(
-                                            "20250404",
-                                            "更新動作：ID=${it.id}, Name=${it.name}"
-                                        )
+                                    if (selectedExercise.id != -1 && selectedExercise.id != group.exercise.id){
+                                    Log.d("WorkoutAdapter", "更新動作：ID=${it.id}, Name=${it.name}")
                                         group.workouts.forEach { workout ->
                                             workout.exerciseId = selectedExercise.id
                                             workoutViewModel.updateWorkout(workout)
                                         }
+                                        // 更新 group.exercise 讓下一次能選中正確項目
+                                        group.exercise = selectedExercise
                                     }
                                 }
                             }
@@ -152,8 +160,9 @@ class WorkoutHeaderViewHolder(val itemBinding: WorkoutItemHeaderBinding) :
                         }
 
                     // 選擇對應的 Exercise 項目
-                    val selectedExerciseIndex =
-                        it.indexOfFirst { exercise -> exercise.id == group.exercise.id }
+                    val selectedExerciseIndex = exerciseList.indexOfFirst {
+                        it.id == (group.exercise.id ?: -1)
+                    }
                     if (selectedExerciseIndex != -1) {
                         itemBinding.workoutExercise.setSelection(selectedExerciseIndex)
                     }

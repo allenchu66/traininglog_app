@@ -14,19 +14,41 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="重量"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeMinTextSize="10sp"/>
+
         <Button
             android:id="@+id/btnWorkoutWeight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="重量"
-            android:layout_weight="1"/>
+            android:text="20kg"
+            android:layout_weight="1"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="次數"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeMinTextSize="10sp"/>
 
         <Button
             android:id="@+id/btnWorkoutReps"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="次數"
-            android:layout_weight="1"/>
+            android:text="5 rsp"
+            android:layout_weight="1"
+            android:layout_margin="5dp"/>
 
     </LinearLayout>
 
