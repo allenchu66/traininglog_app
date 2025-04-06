@@ -14,7 +14,7 @@ class WorkoutRepository(private val db: WorkoutDatabase)  {
     suspend fun updateWorkout(workout: Workout) = db.getWorkoutDao().updateWorkout(workout);
 
     fun getAllWorkouts() = db.getWorkoutDao().getAllWorkouts().map { list -> list.sortedBy { it.id }}
-    fun getWorkoutsByDate(start: Long, end: Long) = db.getWorkoutDao().getWorkoutsByDate(start, end)
+    fun getWorkoutsByDate(targetDate: String) = db.getWorkoutDao().getWorkoutsByDate(targetDate)
 
     suspend fun insertCategory(workoutCategory: WorkoutCategory) = db.getWorkoutDao().insertWorkoutCategory(workoutCategory)
     suspend fun deleteCategory(workoutCategory: WorkoutCategory) = db.getWorkoutDao().deleteWorkoutCategory(workoutCategory)

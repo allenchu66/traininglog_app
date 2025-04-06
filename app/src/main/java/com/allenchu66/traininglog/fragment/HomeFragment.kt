@@ -16,6 +16,8 @@ import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -42,7 +44,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             addWorkout()
         }
 
+        binding.btnDatePrev.setOnClickListener {
+            workoutViewModel.adjustDate(-1)
+        }
+
+        binding.btnDateNext.setOnClickListener {
+            workoutViewModel.adjustDate(+1)
+        }
+
+        workoutViewModel.selectedDate.observe(viewLifecycleOwner) { dateStr ->
+            binding.tvCurrentDate.text = formatForDisplay(dateStr)
+        }
+
         initRecyclerView()
+    }
+
+    fun formatForDisplay(dateString: String): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = sdf.parse(dateString)
+        val displayFormat = SimpleDateFormat("MM月dd日 (EEE)", Locale.TAIWAN)
+        return displayFormat.format(date!!)
     }
 
     private fun updateRecyclerView(groupList: List<WorkoutGroup> ){

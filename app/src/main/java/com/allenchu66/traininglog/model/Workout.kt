@@ -1,6 +1,7 @@
 package com.allenchu66.traininglog.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -34,6 +35,6 @@ data class Workout(
     val sets: Int,        // 組數
     var reps: Int,        // 每組次數
     var weight: Float,    // 重量（kg）
-    val date: Long,       // 訓練日期（以 timestamp 存）
-    val notes: String? = null  // 備註（可選）
+    @ColumnInfo(name = "date")
+    val date: String,      // 使用 yyyy-MM-dd 字串格式
 ):Parcelable

@@ -19,7 +19,9 @@ import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.repository.WorkoutRepository
 
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRepository) : AndroidViewModel(app){
     fun addWorkout(workout: Workout) = viewModelScope.launch { workoutRepository.insertWorkout(workout) }
@@ -27,14 +29,11 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
     fun updateWorkout(workout: Workout) = viewModelScope.launch { workoutRepository.updateWorkout(workout) }
     fun getAllWorkout() = workoutRepository.getAllWorkouts()
 
-    fun getGroupedWorkoutByToday(): LiveData<List<WorkoutGroup>> {
-        val todayStart = getTodayStartTimestamp()
-        val todayEnd = getTodayEndTimestamp()
-
+    fun getGroupedWorkoutByDate(date: String): LiveData<List<WorkoutGroup>> {
         val resultLiveData = MutableLiveData<List<WorkoutGroup>>()
 
         viewModelScope.launch {
-            workoutRepository.getWorkoutsByDate(todayStart, todayEnd).observeForever { workoutList ->
+            workoutRepository.getWorkoutsByDate(date).observeForever { workoutList ->
                 viewModelScope.launch {
                     val categories = workoutRepository.getAllCategoriesDirect()
 
@@ -75,7 +74,10 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
     fun getGroupedWorkoutWithCategories(): LiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>> {
         val result = MediatorLiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>>()
 
-        val groupLiveData = getGroupedWorkoutByToday()
+
+        val groupLiveData = selectedDate.switchMap {
+            date -> getGroupedWorkoutByDate(date)
+        }
         val categoryLiveData = getAllWorkoutCategory()
 
         var latestGroups: List<WorkoutGroup>? = null
@@ -99,29 +101,6 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
     }
 
 
-
-    fun getTodayStartTimestamp(): Long {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return calendar.timeInMillis
-    }
-
-    fun getTodayEndTimestamp(): Long {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 23)
-            set(Calendar.MINUTE, 59)
-            set(Calendar.SECOND, 59)
-            set(Calendar.MILLISECOND, 999)
-        }
-        return calendar.timeInMillis
-    }
-
-
-
     fun addCategory(name:String) = viewModelScope.launch {
         if(workoutRepository.categoryExists(name)){
             Log.d("CategoryViewModel", "Category already exists")
@@ -141,22 +120,34 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
     fun addWorkoutWithDefaults() {
         viewModelScope.launch {
             val categories = workoutRepository.getAllCategoriesDirect() // suspend func
+            val selectedDateValue = selectedDate.value ?: return@launch
             if (categories.isNotEmpty()) {
                 val firstCategory = categories.first()
                 val exercises = workoutRepository.getExercisesByCategoryDirect(firstCategory.id)
                 val firstExerciseId = exercises.firstOrNull()?.id
-
                 val workout = Workout(
                     categoryId = firstCategory.id,
                     exerciseId = null,
                     sets = 5,
                     reps = 12,
                     weight = 50f,
-                    date = System.currentTimeMillis()
+                    date = selectedDateValue
                 )
                 workoutRepository.insertWorkout(workout)
             }
         }
+    }
+
+    var selectedDate = MutableLiveData<String>().apply {
+        value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(System.currentTimeMillis())
+    }
+
+    fun adjustDate(days: Int) {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val current = sdf.parse(selectedDate.value!!)!!
+        val calendar = Calendar.getInstance().apply { time = current }
+        calendar.add(Calendar.DAY_OF_MONTH, days)
+        selectedDate.value = sdf.format(calendar.time)
     }
 }
 

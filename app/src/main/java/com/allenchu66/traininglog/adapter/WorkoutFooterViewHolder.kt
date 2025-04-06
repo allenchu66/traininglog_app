@@ -15,7 +15,6 @@ class WorkoutFooterViewHolder(
 
             val newWorkout = last.copy(
                 id = 0, // Room auto-generate id
-                date = System.currentTimeMillis()
             )
 
             workoutViewModel.addWorkout(newWorkout)
