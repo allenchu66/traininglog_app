@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.NumberPicker
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Index
 import com.allenchu66.traininglog.databinding.WorkoutItemContentBinding
 import com.allenchu66.traininglog.model.Workout
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
@@ -12,7 +13,8 @@ class WorkoutContentViewHolder(
     private val binding: WorkoutItemContentBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(workout: Workout, workoutViewModel: WorkoutViewModel) {
+    fun bind(workout: Workout, workoutViewModel: WorkoutViewModel,index: Int) {
+        binding.tvSetIndex.text = "第 ${index} 組"
         binding.btnWorkoutWeight.text = "${workout.weight} kg"
         binding.btnWorkoutReps.text = "${workout.reps} reps"
 

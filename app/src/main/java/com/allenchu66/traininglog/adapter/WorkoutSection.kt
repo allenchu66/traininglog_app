@@ -48,7 +48,7 @@ class WorkoutSection(
         Log.d("WorkoutSection", "test1")
         if (holder is WorkoutContentViewHolder) {
             Log.d("WorkoutSection", "Binding workout id=${workout.id}, weight=${workout.weight}, reps=${workout.reps}")
-            holder.bind(workout, workoutViewModel)
+            holder.bind(workout, workoutViewModel,position+1)
         }
     }
 
