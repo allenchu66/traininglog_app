@@ -95,7 +95,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             workoutViewModel.getGroupedWorkoutWithCategories().observe(viewLifecycleOwner) { (groupList, categories) ->
                 Log.d("HomeFragment", "Grouped size: ${groupList.size}")
                 sectionAdapter.removeAllSections()
-                groupList.forEach { group ->
+                val sortedGroups = groupList.sortedBy { group ->
+                    group.workouts.minOfOrNull { it.id } ?: Int.MAX_VALUE
+                }
+                sortedGroups.forEach { group ->
                     Log.d("HomeFragment", "Group: ${group.category.name} / ${group.exercise.name} / items=${group.workouts.size}")
                     sectionAdapter.addSection(
                         WorkoutSection(group, categories, workoutViewModel, viewLifecycleOwner)
