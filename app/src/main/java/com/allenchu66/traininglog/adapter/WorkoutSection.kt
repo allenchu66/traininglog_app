@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.allenchu66.traininglog.R
 import com.allenchu66.traininglog.databinding.WorkoutItemContentBinding
+import com.allenchu66.traininglog.databinding.WorkoutItemFooterBinding
 import com.allenchu66.traininglog.databinding.WorkoutItemHeaderBinding
 import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.model.WorkoutGroup
@@ -20,8 +21,9 @@ class WorkoutSection(
     private val lifecycleOwner: LifecycleOwner
 ) : Section(
     SectionParameters.builder()
-        .itemResourceId(R.layout.workout_item_content) // 你的 item layout
-        .headerResourceId(R.layout.workout_item_header) // 如果有 header，這裡加上
+        .itemResourceId(R.layout.workout_item_content)
+        .headerResourceId(R.layout.workout_item_header)
+        .footerResourceId(R.layout.workout_item_footer)
         .build()
 ) {
 
@@ -62,6 +64,17 @@ class WorkoutSection(
         if (holder is WorkoutHeaderViewHolder) {
             Log.d("WorkoutSection", "Binding header for [${group.category.name}][${group.exercise.name}]")
             holder.bind(group,categories, workoutViewModel, lifecycleOwner)
+        }
+    }
+
+    override fun getFooterViewHolder(view: View): RecyclerView.ViewHolder {
+        val binding = WorkoutItemFooterBinding.bind(view)
+        return WorkoutFooterViewHolder(binding)
+    }
+
+    override fun onBindFooterViewHolder(holder: RecyclerView.ViewHolder) {
+        if (holder is WorkoutFooterViewHolder) {
+            holder.bind(group, workoutViewModel)
         }
     }
 }
