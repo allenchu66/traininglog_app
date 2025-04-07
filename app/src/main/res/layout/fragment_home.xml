@@ -68,11 +68,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <ImageView
-        android:id="@+id/emptyNotesImage"
+
+    <TextView
+        android:id="@+id/emptyNotice"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@color/cardview_shadow_end_color"
+        android:text="今天還沒有運動!\n趕快新增一筆紀錄吧！"
+        android:gravity="center"
+        android:textSize="25sp"
         android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

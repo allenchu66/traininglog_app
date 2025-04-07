@@ -69,10 +69,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun updateRecyclerView(groupList: List<WorkoutGroup> ){
         if(groupList != null){
             if(groupList.isNotEmpty()){
-                binding.emptyNotesImage.visibility = View.GONE
+                binding.emptyNotice.visibility = View.GONE
                 binding.homeRecyclerView.visibility = View.VISIBLE
             }else{
-                binding.emptyNotesImage.visibility = View.VISIBLE
+                binding.emptyNotice.visibility = View.VISIBLE
                 binding.homeRecyclerView.visibility = View.GONE
             }
         }

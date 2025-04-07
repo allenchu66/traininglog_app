@@ -8,18 +8,29 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.allenchu66.traininglog.fragment.HomeFragment"
-        android:label="HomeFragment" >
+        android:label="首頁" >
         <action
             android:id="@+id/action_homeFragment_to_editFragment"
-            app:destination="@id/editFragment" />
+            app:destination="@id/editCategoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_editExerciseFragment"
+            app:destination="@id/editExerciseFragment" />
     </fragment>
     <fragment
-        android:id="@+id/editFragment"
-        android:name="com.allenchu66.traininglog.fragment.AddItemFragment"
-        android:label="fragment_edit"
-        tools:layout="@layout/fragment_add" >
+        android:id="@+id/editCategoryFragment"
+        android:name="com.allenchu66.traininglog.fragment.EditCategoryFragment"
+        android:label="編輯部位"
+        tools:layout="@layout/fragment_edit_exercise" >
         <action
             android:id="@+id/action_editFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editExerciseFragment"
+        android:name="com.allenchu66.traininglog.fragment.EditExerciseFragment"
+        android:label="編輯動作" >
+        <action
+            android:id="@+id/action_editExerciseFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>
