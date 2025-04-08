@@ -33,6 +33,9 @@ interface WorkoutDao {
     @Update
     suspend fun updateWorkout(workout: Workout)
 
+    @Update
+    suspend fun updateWorkoutCategory(category: WorkoutCategory)
+
     @Query("SELECT * FROM workout WHERE date = :targetDate ORDER BY id")
     fun getWorkoutsByDate(targetDate: String): LiveData<List<Workout>>
 

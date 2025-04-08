@@ -100,6 +100,8 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
         return result
     }
 
+    fun updateCategory(category: WorkoutCategory) = viewModelScope.launch { workoutRepository.updateCategory(category) }
+
 
     fun addCategory(name:String) = viewModelScope.launch {
         if(workoutRepository.categoryExists(name)){

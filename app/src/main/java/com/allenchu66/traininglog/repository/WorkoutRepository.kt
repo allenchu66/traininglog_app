@@ -19,6 +19,7 @@ class WorkoutRepository(private val db: WorkoutDatabase)  {
     suspend fun insertCategory(workoutCategory: WorkoutCategory) = db.getWorkoutDao().insertWorkoutCategory(workoutCategory)
     suspend fun deleteCategory(workoutCategory: WorkoutCategory) = db.getWorkoutDao().deleteWorkoutCategory(workoutCategory)
     suspend fun categoryExists(name:String):Boolean{return db.getWorkoutDao().countCategoryByName(name)>0}
+    suspend fun updateCategory(category: WorkoutCategory) = db.getWorkoutDao().updateWorkoutCategory(category)
 
     fun getAllWorkoutCategory() = db.getWorkoutDao().getAllWorkoutCategory()
     suspend fun getAllCategoriesDirect(): List<WorkoutCategory> = db.getWorkoutDao().getAllCategoriesDirect()
