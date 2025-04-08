@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/homeFragment"
-        android:title="首頁"
+        android:title="重訓紀錄"
         android:icon="@drawable/ic_home"/>
     <item android:id="@+id/editCategoryFragment"
         android:title="編輯部位"

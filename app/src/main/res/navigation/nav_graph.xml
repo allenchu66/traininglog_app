@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.allenchu66.traininglog.fragment.HomeFragment"
-        android:label="首頁" >
+        android:label="重訓紀錄" >
         <action
             android:id="@+id/action_homeFragment_to_editFragment"
             app:destination="@id/editCategoryFragment" />
