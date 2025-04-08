@@ -62,7 +62,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         workoutViewModel.selectedDate.observe(viewLifecycleOwner) { dateStr ->
             binding.tvCurrentDate.text = formatForDisplay(dateStr)
         }
-
         initRecyclerView()
     }
 
@@ -84,14 +83,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_calendar, null)
         val calendarView = dialogView.findViewById<MaterialCalendarView>(R.id.calendarView)
 
-        // 假設這是你要標記的日子（從 DB 查出來）
-        val datesWithWorkout = listOf("2025-04-05", "2025-04-07") // 可動態從 DB 撈
-        val markedDays = datesWithWorkout.map {
+        workoutViewModel.getWorkoutDates().observe(viewLifecycleOwner) { dateStrings ->
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            CalendarDay.from(sdf.parse(it)!!)
-        }
+            val calendarDays = dateStrings.mapNotNull {
+                try {
+                    CalendarDay.from(sdf.parse(it)!!)
+                } catch (e: Exception) {
+                    null
+                }
+            }
 
-        calendarView.addDecorator(WorkoutDayDecorator(markedDays))
+            calendarView.addDecorator(WorkoutDayDecorator(calendarDays))
+        }
 
         calendarView.setOnDateChangedListener { widget, date, selected ->
             val selectedDateStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date.date)

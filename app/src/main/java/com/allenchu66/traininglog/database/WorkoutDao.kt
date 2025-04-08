@@ -65,4 +65,7 @@ interface WorkoutDao {
 
     @Query("SELECT * FROM exercise WHERE categoryId = :categoryId")
     suspend fun getExercisesByCategoryDirect(categoryId: Int): List<Exercise>
+
+    @Query("SELECT DISTINCT date FROM workout")
+    suspend fun getAllWorkoutDates(): List<String>
 }

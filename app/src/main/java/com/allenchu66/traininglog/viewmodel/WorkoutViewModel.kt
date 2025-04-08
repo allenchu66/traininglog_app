@@ -155,5 +155,10 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
         calendar.add(Calendar.DAY_OF_MONTH, days)
         selectedDate.value = sdf.format(calendar.time)
     }
+
+    fun getWorkoutDates(): LiveData<List<String>> = liveData {
+        val dates = workoutRepository.getWorkoutDates()
+        emit(dates)
+    }
 }
 
