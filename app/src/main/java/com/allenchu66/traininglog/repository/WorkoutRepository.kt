@@ -27,4 +27,6 @@ class WorkoutRepository(private val db: WorkoutDatabase)  {
     fun getExercisesByCategory(categoryId: Int) = db.getWorkoutDao().getExercisesByCategory(categoryId)
     suspend  fun getExercisesByCategoryDirect(categoryId: Int): List<Exercise> = db.getWorkoutDao().getExercisesByCategoryDirect(categoryId)
     suspend fun insertExercise(exercise: Exercise) = db.getWorkoutDao().insertExercise(exercise)
+    suspend fun deleteExercise(exercise: Exercise) = db.getWorkoutDao().deleteExercise(exercise)
+    suspend fun updateExercise(exercise: Exercise) = db.getWorkoutDao().updateExercise(exercise)
 }

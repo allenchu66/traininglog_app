@@ -29,12 +29,18 @@ interface WorkoutDao {
     @Delete
     suspend fun deleteWorkoutCategory(workoutCategory: WorkoutCategory)
 
+    @Delete
+    suspend fun deleteExercise(exercise: Exercise)
+
     /** UPDATE DATA */
     @Update
     suspend fun updateWorkout(workout: Workout)
 
     @Update
     suspend fun updateWorkoutCategory(category: WorkoutCategory)
+
+    @Update
+    suspend fun updateExercise(exercise: Exercise)
 
     @Query("SELECT * FROM workout WHERE date = :targetDate ORDER BY id")
     fun getWorkoutsByDate(targetDate: String): LiveData<List<Workout>>

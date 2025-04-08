@@ -117,6 +117,10 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
         Exercise(name = name, categoryId = categoryId)
     ) }
 
+    fun updateExercise(exercise: Exercise) = viewModelScope.launch { workoutRepository.updateExercise(exercise) }
+
+    fun deleteExercise(exercise: Exercise) = viewModelScope.launch { workoutRepository.deleteExercise(exercise) }
+
     fun getExercisesByCategory(categoryId: Int) = workoutRepository.getExercisesByCategory(categoryId)
 
     fun addWorkoutWithDefaults() {

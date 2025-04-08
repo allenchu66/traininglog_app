@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.allenchu66.traininglog.adapter.CategoryAdapter
+import com.allenchu66.traininglog.adapter.EditableEntryAdapter
 import com.allenchu66.traininglog.databinding.FragmentEditCategoryBinding
 import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
@@ -21,7 +21,7 @@ class EditCategoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: WorkoutViewModel by activityViewModels()
-    private lateinit var adapter: CategoryAdapter
+    private lateinit var adapter: EditableEntryAdapter<WorkoutCategory>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,9 +34,12 @@ class EditCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = CategoryAdapter(
-            onRenameClick = { category -> showRenameDialog(category) },
-            onDeleteClick = { category -> viewModel.deleteCategory(category) }
+        adapter = EditableEntryAdapter(
+            getItemName = { it.name },
+            areItemsTheSame = { old, new -> old.id == new.id },
+            areContentsTheSame = { old, new -> old == new },
+            onRenameClick = { showRenameDialog(it) },
+            onDeleteClick = { viewModel.deleteCategory(it) }
         )
 
         binding.recyclerView.apply {
