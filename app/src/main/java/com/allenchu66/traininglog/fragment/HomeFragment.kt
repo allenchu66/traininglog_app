@@ -2,22 +2,24 @@ package com.allenchu66.traininglog.fragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.allenchu66.traininglog.R
 import com.allenchu66.traininglog.activity.MainActivity
 import com.allenchu66.traininglog.adapter.WorkoutSection
 import com.allenchu66.traininglog.databinding.FragmentHomeBinding
-import com.allenchu66.traininglog.model.Workout
+import com.allenchu66.traininglog.decorator.WorkoutDayDecorator
 import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -27,6 +29,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var workoutViewModel : WorkoutViewModel
     private lateinit var categories: List<WorkoutCategory>
     private lateinit var sectionAdapter: SectionedRecyclerViewAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +66,46 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         initRecyclerView()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.top_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_calendar -> {
+                showCalendarDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showCalendarDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_calendar, null)
+        val calendarView = dialogView.findViewById<MaterialCalendarView>(R.id.calendarView)
+
+        // 假設這是你要標記的日子（從 DB 查出來）
+        val datesWithWorkout = listOf("2025-04-05", "2025-04-07") // 可動態從 DB 撈
+        val markedDays = datesWithWorkout.map {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            CalendarDay.from(sdf.parse(it)!!)
+        }
+
+        calendarView.addDecorator(WorkoutDayDecorator(markedDays))
+
+        calendarView.setOnDateChangedListener { widget, date, selected ->
+            val selectedDateStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date.date)
+            workoutViewModel.selectedDate.value = selectedDateStr
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("選擇訓練日期")
+            .setView(dialogView)
+            .setNegativeButton("關閉", null)
+            .show()
+    }
+
+
     fun formatForDisplay(dateString: String): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val date = sdf.parse(dateString)
@@ -77,7 +124,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         }
     }
-
 
     private fun addWorkout(){
         workoutViewModel.addWorkoutWithDefaults()

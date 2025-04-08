@@ -72,6 +72,10 @@ dependencies {
 
     implementation(libs.sectioned.recyclerView)
     implementation(libs.lifecycle.livedata.ktx)
+
+    implementation(libs.material.calendarview) {
+        exclude(group = "com.android.support", module = "support-compat")
+    }
 }
 
 
