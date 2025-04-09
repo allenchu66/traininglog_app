@@ -1,11 +1,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/homeFragment"
+    <item
+        android:id="@+id/nav_home"
         android:title="重訓紀錄"
-        android:icon="@drawable/ic_home"/>
-    <item android:id="@+id/editCategoryFragment"
+        android:icon="@drawable/ic_home" />
+
+    <item
+        android:id="@+id/nav_edit_category"
         android:title="編輯部位"
-        android:icon="@drawable/ic_edit"/>
-    <item android:id="@+id/editExerciseFragment"
+        android:icon="@drawable/ic_edit" />
+
+    <item
+        android:id="@+id/nav_edit_exercise"
         android:title="編輯運動"
-        android:icon="@drawable/ic_workout"/>
+        android:icon="@drawable/ic_workout" />
+
+    <item
+        android:id="@+id/nav_export"
+        android:title="匯出資料"
+        android:icon="@drawable/ic_export" />
+
+    <item
+        android:id="@+id/nav_import"
+        android:title="匯入資料"
+        android:icon="@drawable/ic_import" />
+
 </menu>

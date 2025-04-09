@@ -1,7 +1,10 @@
 package com.allenchu66.traininglog.viewmodel
 
 import android.app.Application
+import android.content.Context
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -12,13 +15,18 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.allenchu66.traininglog.database.WorkoutDatabase
+import com.allenchu66.traininglog.model.BackupData
 import com.allenchu66.traininglog.model.Exercise
 import com.allenchu66.traininglog.model.Workout
 import com.allenchu66.traininglog.model.WorkoutCategory
 import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.repository.WorkoutRepository
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -160,5 +168,33 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
         val dates = workoutRepository.getWorkoutDates()
         emit(dates)
     }
+
+    fun exportData(context: Context) {
+        viewModelScope.launch {
+            val categories = workoutRepository.getAllCategoriesDirect()
+            val exercises = workoutRepository.getAllExercisesDirect()
+            val workouts = workoutRepository.getAllWorkoutsDirect()
+
+            val backupData = BackupData(categories, exercises, workouts)
+            val json = Gson().toJson(backupData)
+
+            try {
+                val filename = "training_backup_${System.currentTimeMillis()}.json"
+                val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file = File(downloadsDir, filename)
+                file.writeText(json)
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "已匯出到下載資料夾：${file.name}", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "匯出失敗：${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+
 }
 

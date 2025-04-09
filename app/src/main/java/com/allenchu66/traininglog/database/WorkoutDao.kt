@@ -68,4 +68,11 @@ interface WorkoutDao {
 
     @Query("SELECT DISTINCT date FROM workout")
     suspend fun getAllWorkoutDates(): List<String>
+
+    @Query("SELECT * FROM workout")
+    suspend fun getAllWorkoutsDirect(): List<Workout>
+
+    @Query("SELECT * FROM exercise")
+    suspend fun getAllExercisesDirect(): List<Exercise>
+
 }

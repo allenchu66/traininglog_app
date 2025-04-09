@@ -46,7 +46,28 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
         // DrawerLayout + NavigationView 的配對（選單）
-        NavigationUI.setupWithNavController(binding.navView, navController)
+        //NavigationUI.setupWithNavController(binding.navView, navController)
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> navController.navigate(R.id.homeFragment)
+                R.id.nav_edit_category -> navController.navigate(R.id.editCategoryFragment)
+                R.id.nav_edit_exercise -> navController.navigate(R.id.editExerciseFragment)
+
+                R.id.nav_export -> {
+                    showExportDialogOrStartExport()
+                }
+
+                R.id.nav_import -> {
+                    //showImportDialogOrStartImport()
+                }
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+    }
+
+    private fun showExportDialogOrStartExport() {
+        workoutViewModel.exportData(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
