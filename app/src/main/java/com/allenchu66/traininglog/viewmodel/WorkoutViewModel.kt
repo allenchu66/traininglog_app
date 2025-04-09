@@ -2,9 +2,11 @@ package com.allenchu66.traininglog.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -186,6 +188,19 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "已匯出到下載資料夾：${file.name}", Toast.LENGTH_LONG).show()
+                    val uri = FileProvider.getUriForFile(
+                        context,
+                        context.packageName + ".provider",
+                        file
+                    )
+
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "application/json"
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+
+                    context.startActivity(Intent.createChooser(shareIntent, "分享備份檔"))
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
