@@ -75,4 +75,15 @@ interface WorkoutDao {
     @Query("SELECT * FROM exercise")
     suspend fun getAllExercisesDirect(): List<Exercise>
 
+    @Query("DELETE FROM workout") suspend fun clearAllWorkouts()
+    @Query("DELETE FROM exercise") suspend fun clearAllExercises()
+    @Query("DELETE FROM category") suspend fun clearAllCategories()
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExercises(exercises: List<Exercise>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkouts(workouts: List<Workout>)
+
 }

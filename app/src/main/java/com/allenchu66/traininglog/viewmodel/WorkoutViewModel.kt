@@ -195,6 +195,12 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
         }
     }
 
+    fun replaceAllData(backup: BackupData) = viewModelScope.launch {
+        workoutRepository.clearAllData()
+        workoutRepository.insertAll(backup.categories, backup.exercises, backup.workouts)
+    }
+
+
 
 }
 

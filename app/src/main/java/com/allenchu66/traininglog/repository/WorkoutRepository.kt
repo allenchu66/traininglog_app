@@ -38,4 +38,16 @@ class WorkoutRepository(private val db: WorkoutDatabase)  {
     suspend fun getAllWorkoutsDirect(): List<Workout> {
         return  db.getWorkoutDao().getAllWorkoutsDirect()
     }
+
+    suspend fun clearAllData() {
+        db.getWorkoutDao().clearAllWorkouts()
+        db.getWorkoutDao().clearAllExercises()
+        db.getWorkoutDao().clearAllCategories()
+    }
+
+    suspend fun insertAll(categories: List<WorkoutCategory>, exercises: List<Exercise>, workouts: List<Workout>) {
+        db.getWorkoutDao().insertCategories(categories)
+        db.getWorkoutDao().insertExercises(exercises)
+        db.getWorkoutDao().insertWorkouts(workouts)
+    }
 }
