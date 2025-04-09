@@ -18,7 +18,7 @@ class WorkoutContentViewHolder(
     fun bind(workout: Workout, workoutViewModel: WorkoutViewModel,index: Int) {
         binding.tvSetIndex.text = "第 ${index} 組"
         binding.btnWorkoutWeight.text = "${workout.weight} kg"
-        binding.btnWorkoutReps.text = "${workout.reps} reps"
+        binding.btnWorkoutReps.text = "${workout.reps} \nreps"
 
         binding.btnWorkoutWeight.setOnClickListener {
             showTwoPartWeightPickerDialog(
@@ -27,10 +27,9 @@ class WorkoutContentViewHolder(
             ) { selected ->
                 workout.weight = selected
                 workoutViewModel.updateWorkout(workout)
-                binding.btnWorkoutWeight.text = "${String.format("%.1f", selected)} kg"
+                binding.btnWorkoutWeight.text = "${String.format("%.1f", selected)} \nkg"
             }
         }
-
 
         binding.btnWorkoutReps.setOnClickListener {
             showNumberPickerDialog(
