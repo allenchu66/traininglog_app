@@ -44,6 +44,17 @@ class WorkoutContentViewHolder(
                 binding.btnWorkoutReps.text = "$selected reps"
             }
         }
+
+        binding.btnDelete.setOnClickListener {
+            AlertDialog.Builder(binding.root.context)
+                .setTitle("確定刪除這筆紀錄？")
+                .setMessage("刪除後無法復原")
+                .setPositiveButton("刪除") { _, _ ->
+                    workoutViewModel.removeWorkout(workout)
+                }
+                .setNegativeButton("取消", null)
+                .show()
+        }
     }
 
     private fun showNumberPickerDialog(
