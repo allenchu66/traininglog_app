@@ -18,18 +18,17 @@
 - [x] 重訓紀錄（分類：部位 / 動作 / 組數 / 重量）
 - [x] 使用 Sectioned RecyclerView 呈現清晰的訓練清單
 - [x] 日曆標記功能，可查看哪幾天有訓練
-- [x] 資料匯出為 JSON，可儲存至下載資料夾
+- [x] 資料匯出為 JSON，儲存至下載資料夾
 - [x] 資料匯入功能，支援備份還原
 - [x] 匯出後可透過 LINE / Gmail 等方式分享
 - [x] 可在 App 中自訂與管理部位與動作項目
-- [x] 體驗優化：重量支援小數點選擇（例如 7.5 kg）
 
 ---
 
 ## 📦 技術架構
 
 - Room Database（資料儲存）
-- ViewModel + LiveData（狀態管理）
+- ViewModel + LiveData（MVVM）
 - Gson（JSON 轉換）
 - MaterialCalendarView（日曆打點）
 - FileProvider + SAF（檔案讀寫 + 分享）
