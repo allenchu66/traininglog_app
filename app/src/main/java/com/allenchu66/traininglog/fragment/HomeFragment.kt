@@ -2,7 +2,12 @@ package com.allenchu66.traininglog.fragment
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -16,10 +21,9 @@ import com.allenchu66.traininglog.model.WorkoutGroup
 import com.allenchu66.traininglog.viewmodel.WorkoutViewModel
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
-
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -27,8 +31,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val binding get() = homeBinding!!
 
     private lateinit var workoutViewModel : WorkoutViewModel
-    private lateinit var categories: List<WorkoutCategory>
     private lateinit var sectionAdapter: SectionedRecyclerViewAdapter
+    private val sectionMap = mutableMapOf<String, WorkoutSection>()
+    private val workoutSections = mutableListOf<WorkoutSection>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,20 +147,100 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         activity?.let {
             workoutViewModel.getGroupedWorkoutWithCategories().observe(viewLifecycleOwner) { (groupList, categories) ->
-                Log.d("HomeFragment", "Grouped size: ${groupList.size}")
-                sectionAdapter.removeAllSections()
-                val sortedGroups = groupList.sortedBy { group ->
-                    group.workouts.minOfOrNull { it.id } ?: Int.MAX_VALUE
-                }
-                sortedGroups.forEach { group ->
-                    Log.d("HomeFragment", "Group: ${group.category.name} / ${group.exercise.name} / items=${group.workouts.size}")
-                    sectionAdapter.addSection(
-                        WorkoutSection(group, categories, workoutViewModel, viewLifecycleOwner)
-                    )
-                }
+
                 updateRecyclerView(groupList)
-                sectionAdapter.notifyDataSetChanged()
+
+                if (workoutSections.isEmpty()) {
+                    groupList.forEach { group ->
+                        val section = WorkoutSection(group, categories, workoutViewModel, viewLifecycleOwner)
+                        workoutSections.add(section)
+                        sectionAdapter.addSection(section)
+                    }
+                } else {
+                    updateSectionsWithDiff(groupList, categories)
+                }
+            }
+
+        }
+
+
+    }
+
+    private fun updateSectionsWithDiff(
+        newGroups: List<WorkoutGroup>,
+        categories: List<WorkoutCategory>
+    ) {
+        // 1. 先处理新增/刪除整個 section 的情況
+        if (newGroups.size != workoutSections.size) {
+            rebuildAllSections(newGroups, categories)
+            return
+        }
+
+        // 2. 同筆數時，進行內容的精準 diff
+        newGroups.forEachIndexed { index, newGroup ->
+            val section = workoutSections[index]
+            val oldGroup = section.getGroup()
+
+            if (oldGroup != newGroup) {
+                // 更新資料
+                section.updateGroup(newGroup, categories)
+
+                // 拿到這個 section 的內部 adapter
+                val innerAdapter = sectionAdapter.getAdapterForSection(section)
+
+                // —— Header 可能也要重繫（category/exercise id 變了才通知）
+                if (oldGroup.category.id != newGroup.category.id ||
+                    oldGroup.exercise.id != newGroup.exercise.id
+                ) {
+                    innerAdapter.notifyHeaderChanged()
+                }
+
+                // —— Content item 數量增減要精準插入/刪除
+                val oldSize = oldGroup.workouts.size
+                val newSize = newGroup.workouts.size
+
+                when {
+                    newSize > oldSize -> {
+                        // 多了幾筆 newGroup.workouts ，分別插入
+                        for (i in oldSize until newSize) {
+                            innerAdapter.notifyItemInserted(i)
+                        }
+                    }
+                    newSize < oldSize -> {
+                        // 少了幾筆，分別移除
+                        for (i in newSize until oldSize) {
+                            innerAdapter.notifyItemRemoved(i)
+                        }
+                    }
+                    else -> {
+                        // 數量相同但可能內容改了，例如 weight/reps
+                        for (i in 0 until newSize) {
+                            if (oldGroup.workouts[i] != newGroup.workouts[i]) {
+                                innerAdapter.notifyItemChanged(i)
+                            }
+                        }
+                    }
+                }
+
+                // —— Footer 有時候也要一起重繫
+                innerAdapter.notifyFooterChanged()
             }
         }
     }
+
+    private fun rebuildAllSections(
+        groups: List<WorkoutGroup>,
+        categories: List<WorkoutCategory>
+    ) {
+        sectionAdapter.removeAllSections()
+        workoutSections.clear()
+        groups.forEach { g ->
+            val sec = WorkoutSection(g, categories, workoutViewModel, viewLifecycleOwner)
+            workoutSections.add(sec)
+            sectionAdapter.addSection(sec)
+        }
+        sectionAdapter.notifyDataSetChanged()
+    }
+
+
 }

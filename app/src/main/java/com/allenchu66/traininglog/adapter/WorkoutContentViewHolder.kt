@@ -17,7 +17,7 @@ class WorkoutContentViewHolder(
 
     fun bind(workout: Workout, workoutViewModel: WorkoutViewModel,index: Int) {
         binding.tvSetIndex.text = "第 ${index} 組"
-        binding.btnWorkoutWeight.text = "${workout.weight} kg"
+        binding.btnWorkoutWeight.text = "${workout.weight} \nkg"
         binding.btnWorkoutReps.text = "${workout.reps} \nreps"
 
         binding.btnWorkoutWeight.setOnClickListener {
@@ -40,7 +40,7 @@ class WorkoutContentViewHolder(
             ) { selected ->
                 workout.reps = selected
                 workoutViewModel.updateWorkout(workout)
-                binding.btnWorkoutReps.text = "$selected reps"
+                binding.btnWorkoutReps.text = "$selected \nreps"
             }
         }
 

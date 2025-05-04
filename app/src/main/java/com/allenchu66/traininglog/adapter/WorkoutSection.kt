@@ -15,8 +15,8 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 
 class WorkoutSection(
-    private val group: WorkoutGroup,
-    private val categories: List<WorkoutCategory>,
+    private var group: WorkoutGroup,
+    private var categories: List<WorkoutCategory>,
     private val workoutViewModel: WorkoutViewModel,
     private val lifecycleOwner: LifecycleOwner
 ) : Section(
@@ -26,6 +26,8 @@ class WorkoutSection(
         .footerResourceId(R.layout.workout_item_footer)
         .build()
 ) {
+
+    fun getGroup(): WorkoutGroup = group
 
     init {
         Log.d("WorkoutSection", "init with group: ${group.category.name}, items=${group.workouts.size}")
@@ -76,5 +78,10 @@ class WorkoutSection(
         if (holder is WorkoutFooterViewHolder) {
             holder.bind(group, workoutViewModel)
         }
+    }
+
+    fun updateGroup(newGroup: WorkoutGroup, newCategories: List<WorkoutCategory>) {
+        this.group = newGroup
+        this.categories = newCategories
     }
 }

@@ -84,7 +84,6 @@ class WorkoutViewModel(app:Application,private val workoutRepository: WorkoutRep
     fun getGroupedWorkoutWithCategories(): LiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>> {
         val result = MediatorLiveData<Pair<List<WorkoutGroup>, List<WorkoutCategory>>>()
 
-
         val groupLiveData = selectedDate.switchMap {
             date -> getGroupedWorkoutByDate(date)
         }
